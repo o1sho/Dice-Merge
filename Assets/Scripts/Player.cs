@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class Player : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class Player : MonoBehaviour
 
     private int currentTileIndex = 0;
     private bool isMoving = false;
+    private Vector2 startPosition = new Vector2(0, -4);
+
+    public event Action OnCircleOver;
 
     private void OnEnable() {
         if (dice != null) {
@@ -24,7 +28,7 @@ public class Player : MonoBehaviour
     }
 
     private void Start() {
-        transform.position = new Vector2(0, -4);
+        transform.position = startPosition;
     }
 
     private void HandleDiceResult(int result) {
@@ -40,7 +44,9 @@ public class Player : MonoBehaviour
             int targetIndex = currentTileIndex + 1;
 
             if (targetIndex - 1 >= tileSpawner.TilePositions.Count) {
-                Debug.LogWarning("Игрок достиг последней позиции!");
+                Debug.Log("Игрок достиг последней позиции!");
+                OnCircleOver?.Invoke();
+                ResetToStartPosition();
                 break;
             }
 
@@ -61,6 +67,12 @@ public class Player : MonoBehaviour
 
         }
 
+        isMoving = false;
+    }
+
+    public void ResetToStartPosition() {
+        transform.position = startPosition;
+        currentTileIndex = 0;
         isMoving = false;
     }
 }

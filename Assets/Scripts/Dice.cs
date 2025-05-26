@@ -1,11 +1,12 @@
 using UnityEngine;
+using System;
 
 public class Dice : MonoBehaviour
 {
-    public event System.Action<int> OnDiceRolled;
+    public event Action<int> OnDiceRolled;
 
     public void GetRandomValue() {
-        int result = Random.Range(1, 7);
+        int result = UnityEngine.Random.Range(1, 7);
         OnDiceRolled?.Invoke(result);
         Debug.Log(result);
     }
