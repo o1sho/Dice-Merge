@@ -1,18 +1,23 @@
-using UnityEngine;
+//Только управляет UI, не вызывает методы других скриптов напрямую.
 
-public class UIController : MonoBehaviour
-{
-    [SerializeField] private GameObject finishPanel;
+using UnityEngine;
+using UnityEngine.UI;
+using System;
+
+public class UIController : MonoBehaviour, IUIController {
+    [SerializeField] private GameObject menuPanel;
+    [SerializeField] private Button fightButton;
+    [SerializeField] private Button continueButton;
+
+    public event Action OnFightSelected;
+    public event Action OnContinueSelected;
 
     private void Start() {
-        finishPanel.SetActive(false);
+        menuPanel.SetActive(false);
+        fightButton.onClick.AddListener(() => OnFightSelected?.Invoke());
+        continueButton.onClick.AddListener(() => OnContinueSelected?.Invoke());
     }
 
-    public void ToggleFinishPanel() {
-        finishPanel.SetActive(!finishPanel.activeSelf);
-    }
-
-    public void OnContinueButton() {
-        ToggleFinishPanel();
-    }
+    public void ShowMenu() => menuPanel.SetActive(true);
+    public void HideMenu() => menuPanel.SetActive(false);
 }

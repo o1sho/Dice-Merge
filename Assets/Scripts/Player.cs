@@ -1,78 +1,53 @@
+//Отвечает только за движение и взаимодействие с плитками.
+
 using UnityEngine;
 using System.Collections;
 using System;
 
-public class Player : MonoBehaviour
-{
-    [SerializeField] private Dice dice;
-    [SerializeField] private TileSpawner tileSpawner;
-
-    [SerializeField] private float moveDurationTime = 0.5f;
-
-    private int currentTileIndex = 0;
+public class Player : MonoBehaviour, IPlayer {
+    [SerializeField] private int tilesCount; // Кол-во плиток, передаётся через инспектор или GameManager
+    private Tile currentTile;
     private bool isMoving = false;
-    private Vector2 startPosition = new Vector2(0, -4);
+    private bool isInitialPlacement = true;
+    private int currentTileIndex = 0;
 
-    public event Action OnCircleOver;
+    public event Action OnLastTileReached;
+    public event Action<TileType> OnCardCollected;
 
-    private void OnEnable() {
-        if (dice != null) {
-            dice.OnDiceRolled += HandleDiceResult;
+    private void OnTriggerEnter2D(Collider2D other) {
+        Tile tile = other.GetComponent<Tile>();
+        if (tile != null) {
+            currentTile = tile;
         }
     }
 
-    private void OnDisable() {
-        if (dice != null) {
-            dice.OnDiceRolled -= HandleDiceResult;
-        }
+    public void MoveToTile(Vector2[] path, int targetTileIndex, float jumpDelay = 0.2f) {
+        StartCoroutine(MoveCoroutine(path, targetTileIndex, jumpDelay));
     }
 
-    private void Start() {
-        transform.position = startPosition;
-    }
+    public int GetCurrentTileIndex() => currentTileIndex;
 
-    private void HandleDiceResult(int result) {
-        if (!isMoving) {
-            StartCoroutine(MovePlayer(result));
-        }
-    }
-
-    private IEnumerator MovePlayer(int steps) {
+    private IEnumerator MoveCoroutine(Vector2[] path, int targetTileIndex, float jumpDelay) {
         isMoving = true;
+        int pathIndex = currentTileIndex;
 
-        for (int i = 0; i < steps; i++) {
-            int targetIndex = currentTileIndex + 1;
+        foreach (Vector2 position in path) {
+            pathIndex = (pathIndex + 1) % tilesCount;
+            transform.position = position;
 
-            if (targetIndex - 1 >= tileSpawner.TilePositions.Count) {
-                Debug.Log("Игрок достиг последней позиции!");
-                OnCircleOver?.Invoke();
-                ResetToStartPosition();
-                break;
+            if (pathIndex == tilesCount - 1) {
+                OnLastTileReached?.Invoke();
             }
 
-            Vector3 startPos = transform.position;
-            Vector3 targetPos = tileSpawner.TilePositions[targetIndex - 1].position;
-
-            float elapsedTime = 0;
-
-            // Плавное перемещение между точками
-            while (elapsedTime < moveDurationTime) {
-                transform.position = Vector3.Lerp(startPos, targetPos, elapsedTime / moveDurationTime);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-
-            transform.position = targetPos;
-            currentTileIndex = targetIndex;
-
+            yield return new WaitForSeconds(jumpDelay);
         }
 
         isMoving = false;
-    }
+        isInitialPlacement = false;
+        currentTileIndex = targetTileIndex;
 
-    public void ResetToStartPosition() {
-        transform.position = startPosition;
-        currentTileIndex = 0;
-        isMoving = false;
+        if (currentTile != null) {
+            OnCardCollected?.Invoke(currentTile.GetTileType());
+        }
     }
 }
