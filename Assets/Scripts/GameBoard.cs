@@ -36,17 +36,11 @@ public class GameBoard : MonoBehaviour, IGameBoard {
     public Vector2[] GetPath(int currentIndex, int diceRoll, out int newTileIndex) {
         newTileIndex = (currentIndex + diceRoll) % tiles.Count;
         List<Vector2> path = new List<Vector2>();
-        int steps = diceRoll;
         int index = currentIndex;
 
-        if (currentIndex + diceRoll >= tiles.Count) {
-            steps = diceRoll - (tiles.Count - currentIndex);
-            index = 0;
-        }
-
-        for (int i = 0; i <= steps; i++) {
-            path.Add(tiles[index].position);
+        for (int i = 0; i < diceRoll; i++) {
             index = (index + 1) % tiles.Count;
+            path.Add(tiles[index].position);
         }
 
         return path.ToArray();

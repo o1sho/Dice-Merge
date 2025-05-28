@@ -5,16 +5,22 @@ using System.Collections;
 using System;
 
 public class Player : MonoBehaviour, IPlayer {
-    [SerializeField] private int tilesCount; // Кол-во плиток, передаётся через инспектор или GameManager
+    [SerializeField] private int tilesCount;
     private Tile currentTile;
-    private bool isMoving = false;
-    private bool isInitialPlacement = true;
     private int currentTileIndex = 0;
 
     public event Action OnLastTileReached;
     public event Action<TileType> OnCardCollected;
+    public event Action OnMovementCompleted;
 
     private void OnTriggerEnter2D(Collider2D other) {
+        // Проверяем триггер последней точки спавна
+        if (other.CompareTag("LastTilePoint")) {
+            OnLastTileReached?.Invoke();
+            Debug.Log("Player reached last tile point via trigger");
+        }
+
+        // Обрабатываем плитки
         Tile tile = other.GetComponent<Tile>();
         if (tile != null) {
             currentTile = tile;
@@ -27,27 +33,30 @@ public class Player : MonoBehaviour, IPlayer {
 
     public int GetCurrentTileIndex() => currentTileIndex;
 
+    public void StopMovement() {
+        StopAllCoroutines();
+        Debug.Log("Player movement stopped");
+    }
+
+    public void SetTilesCount(int count) => tilesCount = count;
+
     private IEnumerator MoveCoroutine(Vector2[] path, int targetTileIndex, float jumpDelay) {
-        isMoving = true;
+
         int pathIndex = currentTileIndex;
 
         foreach (Vector2 position in path) {
             pathIndex = (pathIndex + 1) % tilesCount;
             transform.position = position;
-
-            if (pathIndex == tilesCount - 1) {
-                OnLastTileReached?.Invoke();
-            }
-
             yield return new WaitForSeconds(jumpDelay);
         }
 
-        isMoving = false;
-        isInitialPlacement = false;
+
         currentTileIndex = targetTileIndex;
 
         if (currentTile != null) {
             OnCardCollected?.Invoke(currentTile.GetTileType());
         }
+
+        OnMovementCompleted?.Invoke();
     }
 }

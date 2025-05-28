@@ -3,12 +3,14 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using System.Collections;
 
 public interface IPlayer {
-    void MoveToTile(Vector2[] path, int targetTileIndex, float jumpDelay = 0.2f);
+    void MoveToTile(Vector2[] path, int targetTileIndex, float jumpDelay = 0.3f);
     int GetCurrentTileIndex();
     event Action OnLastTileReached;
     event Action<TileType> OnCardCollected;
+    event Action OnMovementCompleted;
 }
 
 public interface IGameBoard {
@@ -20,6 +22,7 @@ public interface IGameBoard {
 
 public interface IDice {
     event Action<int> OnDiceRolled;
+    event Action OnRollCompleted;
     void RollDice();
 }
 
@@ -32,6 +35,8 @@ public interface IInventory {
 public interface IUIController {
     void ShowMenu();
     void HideMenu();
+    void EnableRollDiceButton();
     event Action OnFightSelected;
     event Action OnContinueSelected;
+    event Action OnRollDiceSelected;
 }
