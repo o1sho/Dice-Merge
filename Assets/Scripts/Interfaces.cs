@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Collections;
 
 public interface IPlayer {
-    void MoveToTile(Vector2[] path, int targetTileIndex, float jumpDelay = 0.3f);
+    void MoveToTile(Vector2[] path, int targetTileIndex, float jumpDelay = 0.4f);
     int GetCurrentTileIndex();
     event Action OnLastTileReached;
     event Action<TileType> OnCardCollected;
