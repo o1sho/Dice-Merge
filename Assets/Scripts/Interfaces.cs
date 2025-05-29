@@ -40,3 +40,19 @@ public interface IUIController {
     event Action OnContinueSelected;
     event Action OnRollDiceSelected;
 }
+
+// Èםעונפויסû הכÿ Merge-במÿ //
+
+public enum CardType { Attack, Defense, Magic }
+public interface ICard {
+    CardType Type { get; }
+    RectTransform RectTransform { get; }
+    void ActivateEffect(IEnemy enemy);
+    void SetPosition(Vector2 position);
+}
+
+public interface IEnemy {
+    int Health { get; }
+    void TakeDamage(int damage);
+    void Reset();
+}

@@ -1,6 +1,7 @@
 //Скрипт будет координировать взаимодействие между компонентами.
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
     [SerializeField] private GameObject player; // Ссылка на GameObject с IPlayer
@@ -89,11 +90,12 @@ public class GameManager : MonoBehaviour {
     }
 
     private void HandleFight() {
+        _uiController.HideMenu();
         _isPaused = false;
         Time.timeScale = 1f;
         _inventory.ClearInventory();
+        SceneManager.LoadScene("BattleScene");
         Debug.Log("Fight started!");
-        // Здесь можно добавить логику боя
     }
 
     private void HandleMovementCompleted() {
