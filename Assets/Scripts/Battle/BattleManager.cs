@@ -1,13 +1,19 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class BattleManager : MonoBehaviour {
     [SerializeField] private GameObject[] cardPrefabs; // Массив префабов карт с заданными типами
     [SerializeField] private Transform[] cardSpawnPoints; // Точки спавна карт
     [SerializeField] private Enemy enemy; // Ссылка на врага
 
+    [SerializeField] private GameObject reloadCardPrefab;
+    [SerializeField] private float reloadDelay = 2f;
+
     private IEnemy _enemy; // Интерфейс врага
     private ICard[] _cards; // Массив активных карт
+
+    public ICard[] Cards => _cards;
 
     private void Awake() {
         // Инициализация врага
@@ -84,6 +90,8 @@ public class BattleManager : MonoBehaviour {
             rect.anchoredPosition = spawnPointRect.anchoredPosition;
             rect.localScale = Vector3.one;
 
+            // Устанавливаем индекс слота
+            card.SlotIndex = i;
             _cards[i] = card;
         }
     }
@@ -93,10 +101,19 @@ public class BattleManager : MonoBehaviour {
         if (card1.Type == card2.Type) {
             // Активируем эффект
             card1.ActivateEffect(_enemy);
+
+            // Получаем индексы карты
+
+            int slotIndex1 = ((Card)card1).SlotIndex;
+            int slotIndex2 = ((Card)card2).SlotIndex;
+
             // Уничтожаем карты
             Destroy(card1.RectTransform.gameObject);
             Destroy(card2.RectTransform.gameObject);
             Debug.Log($"Merged {card1.Type} cards!");
+
+            SpawnReloadCard(slotIndex1);
+            SpawnReloadCard(slotIndex2);
         }
         else {
             // Возвращаем первую карту на исходную позицию
@@ -109,5 +126,40 @@ public class BattleManager : MonoBehaviour {
         // Возвращаемся в основную сцену
         SceneManager.LoadScene("HikeScene");
         Debug.Log("Battle ended");
+    }
+
+    private void SpawnReloadCard(int slotIndex) {
+        // Спавним пустую карту
+        GameObject reloadCardObj = Instantiate(reloadCardPrefab, transform.parent);
+        RectTransform rect = reloadCardObj.GetComponent<RectTransform>();
+        rect.anchoredPosition = cardSpawnPoints[slotIndex].GetComponent<RectTransform>().anchoredPosition;
+        rect.localScale = Vector3.one;
+
+        // Запускаем корутину перезарядки
+        StartCoroutine(ReplaceEmptyCard(reloadCardObj, slotIndex));
+    }
+
+    private IEnumerator ReplaceEmptyCard(GameObject emptyCard, int slotIndex) {
+        // Ждём заданное время
+        yield return new WaitForSeconds(reloadDelay);
+
+        // Получаем позицию пустой карты
+        RectTransform emptyRect = emptyCard.GetComponent<RectTransform>();
+        Vector2 position = emptyRect.anchoredPosition;
+
+        // Уничтожаем пустую карту
+        Destroy(emptyCard);
+
+        // Спавним случайную карту
+        GameObject cardPrefab = cardPrefabs[Random.Range(0, cardPrefabs.Length)];
+        GameObject cardObj = Instantiate(cardPrefab, position, Quaternion.identity, transform.parent);
+        Card card = cardObj.GetComponent<Card>();
+        RectTransform cardRect = cardObj.GetComponent<RectTransform>();
+        cardRect.anchoredPosition = cardSpawnPoints[slotIndex].GetComponent<RectTransform>().anchoredPosition;
+        cardRect.localScale = Vector3.one;
+
+        // Устанавливаем индекс слота и обновляем массив
+        card.SlotIndex = slotIndex;
+        _cards[slotIndex] = card;
     }
 }

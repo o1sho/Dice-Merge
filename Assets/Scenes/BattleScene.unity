@@ -515,6 +515,8 @@ MonoBehaviour:
   - {fileID: 1316209139}
   - {fileID: 1384979631}
   enemy: {fileID: 1299608700}
+  reloadCardPrefab: {fileID: 665455938028861192, guid: e13a9ab64d0c73b4ca61825835b20c79, type: 3}
+  reloadDelay: 5
 --- !u!1 &484615941
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,7 +627,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_Sprite: {fileID: -2294435392069254888, guid: d937c152a53e6d946ab16cd868520d2d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1280,7 +1282,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_Sprite: {fileID: -6773159852860061813, guid: d937c152a53e6d946ab16cd868520d2d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1555,6 +1557,7 @@ GameObject:
   - component: {fileID: 2188782570547598183}
   - component: {fileID: 430777292}
   - component: {fileID: 430777291}
+  - component: {fileID: 4403954828884752076}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1578,6 +1581,28 @@ Transform:
   - {fileID: 1881370416}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &4403954828884752076
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2309476208133275262}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: b3717aac98d62f442b1993f6bcb68837, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
