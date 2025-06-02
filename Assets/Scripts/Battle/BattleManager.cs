@@ -6,16 +6,26 @@ public class BattleManager : MonoBehaviour {
     [SerializeField] private GameObject[] cardPrefabs; // Массив префабов карт с заданными типами
     [SerializeField] private Transform[] cardSpawnPoints; // Точки спавна карт
     [SerializeField] private Enemy enemy; // Ссылка на врага
+    [SerializeField] private PlayerFighter player; // Ссылка на игрока
 
     [SerializeField] private GameObject reloadCardPrefab;
     [SerializeField] private float reloadDelay = 2f;
 
     private IEnemy _enemy; // Интерфейс врага
+    private IPlayerFighter _player; // Интерфейс игрока
     private ICard[] _cards; // Массив активных карт
 
     public ICard[] Cards => _cards;
+    public IPlayerFighter Player => _player;
 
     private void Awake() {
+        // Инициализация игрока
+        _player = player;
+        if (_player == null) {
+            Debug.LogError("Player is not assigned in BattleManager!");
+            return;
+        }
+
         // Инициализация врага
         _enemy = enemy;
         if (_enemy == null) {
@@ -100,7 +110,7 @@ public class BattleManager : MonoBehaviour {
         // Проверяем совпадение типов
         if (card1.Type == card2.Type) {
             // Активируем эффект
-            card1.ActivateEffect(_enemy);
+            card1.ActivateEffect(_player, _enemy);
 
             // Получаем индексы карты
 

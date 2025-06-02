@@ -101,7 +101,7 @@ public class Card : MonoBehaviour, ICard, IBeginDragHandler, IDragHandler, IEndD
         return new Rect(min.x, min.y, max.x - min.x, max.y - min.y);
     }
 
-    public void ActivateEffect(IEnemy enemy) {
+    public void ActivateEffect(IPlayerFighter player, IEnemy enemy) {
         // Ёффект по типу
         switch (type) {
             case CardType.Attack:
@@ -110,9 +110,14 @@ public class Card : MonoBehaviour, ICard, IBeginDragHandler, IDragHandler, IEndD
                     Debug.Log("Attack effect: 10 damage dealt!");
                 }
                 break;
+
             case CardType.Defense:
-                Debug.Log("Defense effect activated");
+                if (player != null) {
+                    player.ActivateShield();
+                    Debug.Log("Defense effect activated");
+                }
                 break;
+
             case CardType.Magic:
                 Debug.Log("Magic effect activated");
                 break;

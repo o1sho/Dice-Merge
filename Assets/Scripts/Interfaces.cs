@@ -47,12 +47,20 @@ public enum CardType { Attack, Defense, Magic }
 public interface ICard {
     CardType Type { get; }
     RectTransform RectTransform { get; }
-    void ActivateEffect(IEnemy enemy);
+    void ActivateEffect(IPlayerFighter player, IEnemy enemy);
     void SetPosition(Vector2 position);
 }
 
 public interface IEnemy {
     int Health { get; }
     void TakeDamage(int damage);
+    void DealDamage(int damage);
     void Reset();
+}
+
+public interface IPlayerFighter {
+    int Health { get; }
+    void TakeDamage(int damage);
+    void Reset();
+    void ActivateShield();
 }
